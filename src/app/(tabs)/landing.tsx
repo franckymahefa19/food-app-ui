@@ -1,16 +1,54 @@
+import Categories from "@/components/categories";
+import Recipes from "@/components/recipes";
+import axios from "axios";
 import { useHeaderHeight } from "expo-router/build/react-navigation";
+import { useEffect, useState } from "react";
 import { ScrollView, Text, TextInput, View } from "react-native";
 import { MagnifyingGlassIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 
 function landing() {
   const header = useHeaderHeight();
+  const [activeCat, setActiveCat] = useState("Beef");
+  const [categories, setCategories] = useState([]);
+  const [recipes, setRecipes] = useState([]);
+
+  useEffect(() => {
+    loadCategories();
+    loadRecipes(activeCat);
+  }, [activeCat]);
+
+  const loadCategories = async () => {
+    try {
+      const response = await axios.get(
+        "https://www.themealdb.com/api/json/v1/1/categories.php",
+      );
+      if (response && response.data) {
+        setCategories(response.data.categories);
+      }
+    } catch (err: any) {
+      console.log("error : ", err.message);
+    }
+  };
+
+  const loadRecipes = async (category: string) => {
+    try {
+      const response = await axios.get(
+        `https://www.themealdb.com/api/json/v1/1/filter.php?c=${category}`,
+      );
+      if (response && response.data) {
+        setRecipes(response.data.meals);
+      }
+    } catch (err: any) {
+      console.log("error : ", err.message);
+    }
+  };
+
   return (
     <View className="flex-1 bg-white" style={{ paddingTop: header + 10 }}>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ paddingBottom: 50 }}
-        className="space-y-6"
+        contentContainerStyle={{ paddingBottom: 50, gap: 10 }}
       >
         <View className="mx-4 space-y-2 mb-2">
           <Text style={{ fontSize: hp(1.7) }} className="text-neutral-600">
@@ -46,7 +84,18 @@ function landing() {
             />
           </View>
         </View>
-        <View></View>
+        <View>
+          {categories.length === 0 ? null : (
+            <Categories
+              categories={categories}
+              activeCat={activeCat}
+              setActiveCat={setActiveCat}
+            />
+          )}
+        </View>
+        <View>
+          <Recipes categories={categories} recipes={recipes} />
+        </View>
       </ScrollView>
     </View>
   );
