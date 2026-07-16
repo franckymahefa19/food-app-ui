@@ -12,6 +12,7 @@ function landing() {
   const [activeCat, setActiveCat] = useState("Beef");
   const [categories, setCategories] = useState([]);
   const [recipes, setRecipes] = useState([]);
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     loadCategories();
@@ -26,8 +27,10 @@ function landing() {
       if (response && response.data) {
         setCategories(response.data.categories);
       }
+      setError(false);
     } catch (err: any) {
       console.log("error : ", err.message);
+      setError(true);
     }
   };
 
@@ -84,18 +87,24 @@ function landing() {
             />
           </View>
         </View>
-        <View>
-          {categories.length === 0 ? null : (
-            <Categories
-              categories={categories}
-              activeCat={activeCat}
-              setActiveCat={setActiveCat}
-            />
-          )}
-        </View>
-        <View>
-          <Recipes categories={categories} recipes={recipes} />
-        </View>
+        {error ? (
+          <View>Une erreur s'est produite</View>
+        ) : (
+          <>
+            <View>
+              {categories.length === 0 ? null : (
+                <Categories
+                  categories={categories}
+                  activeCat={activeCat}
+                  setActiveCat={setActiveCat}
+                />
+              )}
+            </View>
+            <View>
+              <Recipes categories={categories} recipes={recipes} />
+            </View>
+          </>
+        )}
       </ScrollView>
     </View>
   );

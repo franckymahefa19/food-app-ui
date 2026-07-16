@@ -2,7 +2,6 @@ import { Stack } from "expo-router";
 import { Image, TouchableOpacity, View } from "react-native";
 import { BellIcon } from "react-native-heroicons/outline";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
-
 function Tabslayout() {
   return (
     <Stack>
@@ -32,6 +31,12 @@ function Tabslayout() {
               <BellIcon size={hp(4)} color="gray" />
             </View>
           ),
+        }}
+      />
+      <Stack.Screen
+        name="RecipeDetails"
+        options={{
+          headerShown: false,
         }}
       />
     </Stack>
