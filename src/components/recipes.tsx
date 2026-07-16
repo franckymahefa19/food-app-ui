@@ -1,5 +1,6 @@
 import MasonryList from "@react-native-seoul/masonry-list";
-import { Image, Pressable, Text, View } from "react-native";
+import { useRouter } from "expo-router";
+import { Pressable, Text, View } from "react-native";
 import Animated, { FadeInDown } from "react-native-reanimated";
 import { heightPercentageToDP as hp } from "react-native-responsive-screen";
 import { MealCategory } from "./categories";
@@ -51,6 +52,8 @@ const Recipes = ({
 
 export default Recipes;
 
+const router = useRouter();
+
 const RecipeCard = ({ item, index }: { item: MealListItem; index: number }) => {
   const isEven = index % 2 === 0;
   return (
@@ -67,14 +70,25 @@ const RecipeCard = ({ item, index }: { item: MealListItem; index: number }) => {
           paddingRight: isEven ? 8 : 0,
         }}
         className="justify-center mb-4 space-y-1"
+        onPress={() =>
+          router.push({
+            pathname: "/RecipeDetails",
+            params: {
+              id: item.idMeal,
+              strMeal: item.strMeal, // Ajouté
+              strMealThumb: item.strMealThumb, // Ajouté
+            },
+          })
+        }
       >
-        <Image
+        <Animated.Image
           source={{ uri: item.strMealThumb }}
           style={{
             width: "100%",
             height: index % 3 === 0 ? hp(25) : hp(35),
             borderRadius: 35,
           }}
+          sharedTransitionTag={item.strMeal}
         />
         <Text
           className="font-semibold ml-2 text-neutral-600"
